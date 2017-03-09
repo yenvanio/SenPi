@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "782361806355",
+    "firebase_url": "https://senpi-88220.firebaseio.com",
+    "project_id": "senpi-88220",
+    "storage_bucket": "senpi-88220.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:782361806355:android:fb6dbac52af5c4be",
+        "android_client_info": {
+          "package_name": "com.shiv.outsourced.senpi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "782361806355-6kjgdnl08f0oucsstutva544nkergg5n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shiv.outsourced.senpi",
+            "certificate_hash": "9a478901a2c4b2c6129a9d7ae52ec6159f2e06d7"
+          }
+        },
+        {
+          "client_id": "782361806355-oqutb26lps1k0e1os6p6djqbbrgeerpv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyASi0yTYBSu2l5Tj4B2_qGPw4pdrZ06rG4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "782361806355-oqutb26lps1k0e1os6p6djqbbrgeerpv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

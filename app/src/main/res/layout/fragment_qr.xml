@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/addButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="top|center_horizontal"
+        android:background="@color/WhiteSmoke"
+        android:elevation="4dp"
+        android:text="Finish"
+        android:textColor="@color/colorPrimaryDark"
+        app:layout_anchor="@+id/include"
+        app:layout_anchorGravity="bottom|center_horizontal" />
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/content_qr" />
+
+</android.support.design.widget.CoordinatorLayout>

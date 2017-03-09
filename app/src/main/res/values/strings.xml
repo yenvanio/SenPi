@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">SenPi</string>
+    <string name="title_home">Home</string>
+    <string name="title_qr">Generate</string>
+    <string name="title_settings">Settings</string>
+    <string name="web_client_id">782361806355-oqutb26lps1k0e1os6p6djqbbrgeerpv.apps.googleusercontent.com</string>
+    <string name="login_title">Login</string>
+    <string name="errno">You do not have any QR Codes set-up</string>
+
+    <string-array name="light_array">
+        <item>Lights Off</item>
+        <item>Dim Lighting</item>
+        <item>Lights On</item>
+    </string-array>
+</resources>
