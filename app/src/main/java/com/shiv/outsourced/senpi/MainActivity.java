@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
     private FirebaseAuth mAuth;
     private GoogleApiClient mGoogleApiClient;
     private List<QRCode> qrCodeList;
+    int counter =0;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -70,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
             b.putSerializable("user", mUser);
             frag.setArguments(b);
             ft.replace(R.id.fragment_container, frag);
-            ft.addToBackStack(null);
             ft.commit();
 
             return true;
@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
                     mUser = new User(user.getUid());
                     mUser.setName(user.getDisplayName());
                     mUser.setEmail(user.getEmail());
+                    mUser.setQrCodeList(qrCodeList);
                     Fragment frag = new HomeFragment();
                     Bundle c = new Bundle();
                     c.putSerializable("user", mUser);
@@ -225,12 +226,22 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
 
     @Override
     public List<QRCode> getCodeList() {
-        return qrCodeList;
+        return qrCodeList; //pull list from firebase
     }
 
     @Override
     public void addQRCode(QRCode qrCode) {
+        qrCodeList.add(qrCode); //push update to firebase
+    }
 
+    @Override
+    public void onBackPressed ()
+    {
+        super.onBackPressed();
+        counter++;
+        if(counter==1) {
+            Toast.makeText(this, "Press again to Exit", Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

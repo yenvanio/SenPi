@@ -3,6 +3,8 @@ package com.shiv.outsourced.senpi;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,8 @@ public class HomeFragment extends Fragment {
     private User user;
     private List<QRCode> codes;
     qrCodeList mCallback;
+    RecyclerView rv;
+    RVAdapter adapter;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -53,8 +57,12 @@ public class HomeFragment extends Fragment {
 
         else
             {
-                //show cards+recycler view of set up qr codes,
-                // on click should pop up dialog that shows qr code nice one
+                errno.setVisibility(View.GONE);
+                welcome.setVisibility(View.GONE);
+                rv = (RecyclerView) view.findViewById(R.id.rv);
+                rv.setLayoutManager(new LinearLayoutManager(getActivity()));
+                adapter = new RVAdapter(codes, getActivity());
+                rv.setAdapter(adapter);
             }
 
         return view;

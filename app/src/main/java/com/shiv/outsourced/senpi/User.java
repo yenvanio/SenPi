@@ -33,7 +33,7 @@ public class User implements Serializable {
         return name;
     }
 
-    public List<QRCode> getQr() {
+    public List<QRCode> getQrCodeList() {
         return qrCodeList;
     }
 
@@ -49,7 +49,7 @@ public class User implements Serializable {
         this.name = name;
     }
 
-    public void setQr(List<QRCode> qrCodeList) {
+    public void setQrCodeList(List<QRCode> qrCodeList) {
         this.qrCodeList = qrCodeList;
     }
 
