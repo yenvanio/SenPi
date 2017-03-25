@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:fitsSystemWindows="true"
+    android:id="@+id/main_layout"
     tools:context="com.shiv.outsourced.senpi.MainActivity">
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/content_qr" />
 
     <Button
         android:id="@+id/addButton"
@@ -20,8 +26,4 @@
         app:layout_anchor="@+id/include"
         app:layout_anchorGravity="bottom|center_horizontal" />
 
-    <include
-        android:id="@+id/include"
-        layout="@layout/content_qr" />
-
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>

@@ -1,7 +1,6 @@
 package com.shiv.outsourced.senpi;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,8 +11,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -32,6 +29,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,9 +44,11 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
     public User mUser;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
     private GoogleApiClient mGoogleApiClient;
     private List<QRCode> qrCodeList;
-    int counter =0;
+    private DatabaseReference mPostReference;
+    private ValueEventListener mPostListener;
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -71,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
             b.putSerializable("user", mUser);
             frag.setArguments(b);
             ft.replace(R.id.fragment_container, frag);
+//            ft.addToBackStack(null);
             ft.commit();
 
             return true;
@@ -84,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
         setContentView(R.layout.activity_main);
 
         qrCodeList = new ArrayList();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -109,23 +115,30 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+
                     mUser = new User(user.getUid());
                     mUser.setName(user.getDisplayName());
                     mUser.setEmail(user.getEmail());
                     mUser.setQrCodeList(qrCodeList);
+
+                    mDatabase.child("users").child(mUser.getId()).setValue(mUser);
+
                     Fragment frag = new HomeFragment();
+
                     Bundle c = new Bundle();
                     c.putSerializable("user", mUser);
                     frag.setArguments(c);
+
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.fragment_container, frag);
-                    ft.addToBackStack(null);
+//                    ft.addToBackStack(null);
                     ft.commit();
 
 
                 } else {
                     // User is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
+
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setMessage("Google Sign In")
                             .setCancelable(false)
@@ -185,7 +198,6 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
         }
     }
 
-
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
@@ -209,7 +221,6 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
                 });
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -226,22 +237,40 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
 
     @Override
     public List<QRCode> getCodeList() {
+        mPostReference = FirebaseDatabase.getInstance().getReference()
+                .child("user");
+
+        mPostReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                qrCodeList = user.getQrCodeList();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
         return qrCodeList; //pull list from firebase
     }
 
     @Override
     public void addQRCode(QRCode qrCode) {
+
         qrCodeList.add(qrCode); //push update to firebase
+        mUser.setQrCodeList(qrCodeList);
+        mDatabase.child("users").child(mUser.getId()).setValue(mUser);
+        // Write a message to the database
+
+
     }
 
     @Override
     public void onBackPressed ()
     {
         super.onBackPressed();
-        counter++;
-        if(counter==1) {
-            Toast.makeText(this, "Press again to Exit", Toast.LENGTH_SHORT).show();
-        }
     }
 
 }
