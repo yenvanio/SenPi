@@ -28,16 +28,16 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements SettingsFragment.onSignOutListener, HomeFragment.qrCodeList, QRFragment.qrCodeList {
+public class MainActivity extends AppCompatActivity implements SettingsFragment.onSignOutListener, HomeFragment.HomeFrag, QRFragment.qrCodeList {
 
     private static final String TAG = "Firebase";
     private static final int RC_SIGN_IN = 9001;
@@ -71,13 +71,9 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
             }
 
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            Bundle b = new Bundle();
-            b.putSerializable("user", mUser);
-            frag.setArguments(b);
             ft.replace(R.id.fragment_container, frag);
 //            ft.addToBackStack(null);
             ft.commit();
-
             return true;
         }
 
@@ -119,16 +115,22 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
                     mUser = new User(user.getUid());
                     mUser.setName(user.getDisplayName());
                     mUser.setEmail(user.getEmail());
-                    mUser.setQrCodeList(qrCodeList);
 
-                    mDatabase.child("users").child(mUser.getId()).setValue(mUser);
+                    mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot snapshot) {
+                            User user = snapshot.getValue(User.class);
+                            qrCodeList = user.getQrCodeList();
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Toast.makeText(MainActivity.this, "fuvckk", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
 
                     Fragment frag = new HomeFragment();
-
-                    Bundle c = new Bundle();
-                    c.putSerializable("user", mUser);
-                    frag.setArguments(c);
-
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
                     ft.replace(R.id.fragment_container, frag);
 //                    ft.addToBackStack(null);
@@ -208,6 +210,8 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         Log.d(TAG, "signInWithCredential:onComplete:" + task.isSuccessful());
 
+                        mDatabase.child("users").child(mUser.getId()).setValue(mUser);
+
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
                         // signed in user can be handled in the listener.
@@ -237,14 +241,24 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
 
     @Override
     public List<QRCode> getCodeList() {
-        mPostReference = FirebaseDatabase.getInstance().getReference()
-                .child("user");
+        return mUser.getQrCodeList();
+    }
 
-        mPostReference.addValueEventListener(new ValueEventListener() {
+    @Override
+    public void addQRCode(QRCode qrCode) {
+
+        qrCodeList.add(qrCode);
+        mUser.setQrCodeList(qrCodeList);
+        mDatabase.child("users").child(mUser.getId()).child("qrCodeList").setValue(qrCodeList);
+
+        mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 User user = snapshot.getValue(User.class);
-                qrCodeList = user.getQrCodeList();
+                if(user!=null) {
+                    qrCodeList = user.getQrCodeList();
+                    mUser.setQrCodeList(qrCodeList);
+                }
             }
 
             @Override
@@ -253,18 +267,12 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
             }
         });
 
-        return qrCodeList; //pull list from firebase
+
     }
 
     @Override
-    public void addQRCode(QRCode qrCode) {
-
-        qrCodeList.add(qrCode); //push update to firebase
-        mUser.setQrCodeList(qrCodeList);
-        mDatabase.child("users").child(mUser.getId()).setValue(mUser);
-        // Write a message to the database
-
-
+    public String getUsername() {
+        return mUser.getName();
     }
 
     @Override

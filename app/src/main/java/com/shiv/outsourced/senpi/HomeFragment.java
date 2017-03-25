@@ -23,9 +23,9 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private User user;
+    private String name;
     private List<QRCode> codes;
-    qrCodeList mCallback;
+    HomeFrag mCallback;
     RecyclerView rv;
     RVAdapter adapter;
 
@@ -37,21 +37,21 @@ public class HomeFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (qrCodeList) getActivity();
+            mCallback = (HomeFrag) getActivity();
         } catch (ClassCastException e) {
             throw new ClassCastException(getActivity().toString()
                     + " must implement OnHeadlineSelectedListener");
         }
 
-        user = (User) getArguments().getSerializable("user");
+        name = mCallback.getUsername();
         codes = mCallback.getCodeList();
 
         TextView welcome = (TextView) view.findViewById(R.id.welcome);
         TextView errno = (TextView) view.findViewById(R.id.errno);
 
-        welcome.setText("Welcome, " + user.getName());
+        welcome.setText("Welcome, " + name);
 
-        if (codes.isEmpty()) {
+        if (codes == null) {
             errno.setText(R.string.errno);
         }
 
@@ -68,10 +68,11 @@ public class HomeFragment extends Fragment {
         return view;
     }
 
-    public interface qrCodeList
+    public interface HomeFrag
     {
         public List<QRCode> getCodeList();
         public void addQRCode(QRCode qrCode);
+        public String getUsername();
     }
 
 
