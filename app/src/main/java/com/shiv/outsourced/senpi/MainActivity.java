@@ -84,7 +84,8 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        qrCodeList = new ArrayList();
+        qrCodeList = new ArrayList<>();
+
         mDatabase = FirebaseDatabase.getInstance().getReference();
 
         // Configure Google Sign In
@@ -119,9 +120,10 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
                     mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot snapshot) {
-                            User user = snapshot.getValue(User.class);
-                            qrCodeList = user.getQrCodeList();
-                        }
+
+                            System.out.println(snapshot.child("qrCodeList"));
+
+                            }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
@@ -247,7 +249,11 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
     @Override
     public void addQRCode(QRCode qrCode) {
 
-        qrCodeList.add(qrCode);
+        if(qrCodeList!=null){qrCodeList.add(qrCode);}
+        else
+            {qrCodeList = new ArrayList<>();
+                qrCodeList.add(qrCode);}
+
         mUser.setQrCodeList(qrCodeList);
         mDatabase.child("users").child(mUser.getId()).child("qrCodeList").setValue(qrCodeList);
 
