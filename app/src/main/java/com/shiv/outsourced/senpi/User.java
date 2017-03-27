@@ -1,5 +1,8 @@
 package com.shiv.outsourced.senpi;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -17,8 +20,6 @@ public class User implements Serializable {
     public User(String id) {
         this.id = id;
     }
-
-    public User () {}
 
     public String getId() {
         return id;
